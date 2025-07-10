@@ -45,7 +45,7 @@ public class GeminiClient {
                     .append(", Cấp độ: ").append(course.getDifficulty())
                     .append("\n");
         });
-        promptBuilder.append("\nDựa trên mục tiêu của sinh viên và các khóa học có sẵn, hãy tạo ra một lộ trình học tập hợp lý gồm 3 bước.\n");
+        promptBuilder.append("\nDựa trên mục tiêu của sinh viên và các khóa học có sẵn, hãy tạo ra một lộ trình học tập hợp lý gồm 5 bước.\n");
         promptBuilder.append("Hãy sắp xếp các khóa học theo thứ tự logic, bắt đầu từ các khóa nền tảng (cơ bản) rồi mới đến các khóa nâng cao hơn.\n");
         promptBuilder.append("\nQUAN TRỌNG: Chỉ trả về một chuỗi chứa ID của các khóa học trong lộ trình, phân tách nhau bởi dấu phẩy (ví dụ: CS101,AI101,AI201). Không thêm bất kỳ văn bản giải thích nào khác.");
         return promptBuilder.toString();

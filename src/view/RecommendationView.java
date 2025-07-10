@@ -25,7 +25,7 @@ public class RecommendationView {
         System.out.println("\n=======================================================");
         System.out.printf("--- LỘ TRÌNH ĐỀ XUẤT CHO '%s' ---\n", userGoal.toUpperCase());
         if (path.isEmpty()) {
-            System.out.println("Rất tiếc, không thể tạo lộ trình phù hợp hoặc có lỗi xảy ra.");
+            System.out.println("Hiện tại hệ thống chưa hỗ trợ lĩnh vực này. Vui lòng thử lại với lĩnh vực khác.");
         } else {
             int step = 1;
             for (Course course : path) {
