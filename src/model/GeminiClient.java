@@ -33,6 +33,25 @@ public class GeminiClient {
         }
     }
 
+    public String summarizeCourseDescription(String courseDescription) throws IOException, InterruptedException {
+        String prompt = buildSummaryPrompt(courseDescription);
+        String jsonPayload = "{\"contents\":[{\"parts\":[{\"text\":\"" + prompt.replace("\"", "\\\"").replace("\n", "\\n") + "\"}]}]}";
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(API_URL))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(jsonPayload))
+                .build();
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        if (response.statusCode() == 200) {
+            return parseSummaryResponse(response.body());
+        } else {
+            throw new IOException("Lỗi khi gọi API: " + response.statusCode() + " - " + response.body());
+        }
+    }
+
     private String buildLearningPathPrompt(String userGoal, ArrayList<Course> availableCourses) {
         StringBuilder promptBuilder = new StringBuilder();
         promptBuilder.append("Bạn là một chuyên gia tư vấn học thuật. Một sinh viên muốn có một lộ trình học tập.\n\n");
@@ -48,6 +67,13 @@ public class GeminiClient {
         promptBuilder.append("\nDựa trên mục tiêu của sinh viên và các khóa học có sẵn, hãy tạo ra một lộ trình học tập hợp lý gồm 5 bước.\n");
         promptBuilder.append("Hãy sắp xếp các khóa học theo thứ tự logic, bắt đầu từ các khóa nền tảng (cơ bản) rồi mới đến các khóa nâng cao hơn.\n");
         promptBuilder.append("\nQUAN TRỌNG: Chỉ trả về một chuỗi chứa ID của các khóa học trong lộ trình, phân tách nhau bởi dấu phẩy (ví dụ: CS101,AI101,AI201). Không thêm bất kỳ văn bản giải thích nào khác.");
+        return promptBuilder.toString();
+    }
+
+    private String buildSummaryPrompt(String courseDescription) {
+        StringBuilder promptBuilder = new StringBuilder();
+        promptBuilder.append("Bạn là một trợ lý AI. Hãy tóm tắt ngắn gọn nội dung khóa học sau cho sinh viên dễ hiểu (tối đa 3 câu):\n");
+        promptBuilder.append(courseDescription);
         return promptBuilder.toString();
     }
 
@@ -86,6 +112,28 @@ public class GeminiClient {
             System.err.println("Không thể phân tích phản hồi từ API. Nội dung phản hồi: " + responseBody);
             System.err.println("Lỗi chi tiết: " + e.getMessage());
             return new ArrayList<>();
+        }
+    }
+
+    private String parseSummaryResponse(String responseBody) {
+        try {
+            String key = "\"text\": \"";
+            int start = responseBody.indexOf(key);
+            if (start == -1) {
+                throw new RuntimeException("Không tìm thấy trường 'text' trong phản hồi của API.");
+            }
+            start += key.length();
+            int end = responseBody.indexOf("\"", start);
+            if (end == -1) {
+                throw new RuntimeException("Không tìm thấy dấu ngoặc kép đóng cho trường 'text'.");
+            }
+            String content = responseBody.substring(start, end);
+            content = content.replace("\\n", " ").trim();
+            return content;
+        } catch (Exception e) {
+            System.err.println("Không thể phân tích phản hồi từ API. Nội dung phản hồi: " + responseBody);
+            System.err.println("Lỗi chi tiết: " + e.getMessage());
+            return "Không thể tóm tắt nội dung.";
         }
     }
 }

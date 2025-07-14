@@ -30,6 +30,15 @@ public class RecommendationView {
             int step = 1;
             for (Course course : path) {
                 System.out.printf("Bước %d: %s\n", step++, course);
+                if (!course.getDescription().isEmpty()) {
+                    System.out.print("   📝 Tóm tắt:\n");
+                    // Tách các câu và in mỗi câu trên một dòng
+                    String[] sentences = course.getDescription().split("(?<=[.!?])\\s+");
+                    for (String sentence : sentences) {
+                        System.out.println("      " + sentence.trim());
+                    }
+                }
+                System.out.println();
             }
         }
         System.out.println("=======================================================\n");
