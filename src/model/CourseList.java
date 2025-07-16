@@ -1,9 +1,14 @@
 package model;
 
+import view.ListView;
+import view.Validation;
+
 import java.util.ArrayList;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Comparator;
+import java.util.function.Predicate;
 
 public class CourseList {
     private final ArrayList<Course> allCourses = new ArrayList<>();
@@ -34,5 +39,26 @@ public class CourseList {
         return allCourses.stream()
                 .filter(c -> c.getCourseId().equals(id.trim()))
                 .findFirst().orElse(null);
+    }
+
+    public void display() {
+        ListView.listAll(allCourses);
+    }
+    public ArrayList<Course> search(Predicate<Course> predicate){
+        ArrayList<Course> list = new ArrayList<>();
+        for (Course c : allCourses) {
+            if (predicate.test(c)) {
+                list.add(c);
+            }
+        }
+        return list;
+    }
+    public void sort() {
+        allCourses.sort(Comparator.comparing(Course::getCourseName));
+        display();
+    }
+    public boolean delete() {
+        String id = Validation.getString("Enter course ID to delete: ");
+        return allCourses.removeIf(c -> c.getCourseId().equals(id));
     }
 }

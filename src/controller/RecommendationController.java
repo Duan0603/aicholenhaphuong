@@ -19,27 +19,24 @@ public class RecommendationController {
     public void start() {
         view.displayWelcomeMessage();
         String userGoal = null;
-        while(true){
-            userGoal = view.promptForUserGoal();
-            if (userGoal.equalsIgnoreCase("exit")){
-                System.exit(0);
-            }
-            if (userGoal == null || userGoal.isBlank()) {
-                view.displayError("Yêu cầu đầu vào không được để trống.");
-                return;
-            }
+        userGoal = view.promptForUserGoal();
 
-            view.displayAnalysisMessage(userGoal);
-
-            try {
-                ArrayList<Course> learningPath = service.generateLearningPathFor(userGoal, 5);
-                view.displayLearningPath(userGoal, learningPath);
-            } catch (IOException | InterruptedException e) {
-                view.displayError("Lỗi khi xử lý yêu cầu: " + e.getMessage());
-                // In chi tiết lỗi để debug
-                e.printStackTrace();
-            }
+        if (userGoal == null || userGoal.isBlank()) {
+            view.displayError("Yêu cầu đầu vào không được để trống.");
+            return;
         }
+
+        view.displayAnalysisMessage(userGoal);
+
+        try {
+            ArrayList<Course> learningPath = service.generateLearningPathFor(userGoal, 5);
+            view.displayLearningPath(userGoal, learningPath);
+        } catch (IOException | InterruptedException e) {
+            view.displayError("Lỗi khi xử lý yêu cầu: " + e.getMessage());
+            // In chi tiết lỗi để debug
+            e.printStackTrace();
+        }
+
 
 
     }

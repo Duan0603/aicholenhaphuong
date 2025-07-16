@@ -31,7 +31,7 @@ public class Course {
 
     @Override
     public String toString() {
-        return String.format("'%s' (ID: %s, Chủ đề: %s, Cấp độ: %s)",
+        return String.format("%-40s | %-10s | %-20s | %-10s \n",
                 courseName, courseId, topic, difficulty);
     }
 }
